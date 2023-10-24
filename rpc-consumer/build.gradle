@@ -1,0 +1,5 @@
+
+dependencies {
+    implementation project(":rpc-common")
+    implementation project(path: ':rpc-provider')
+}

@@ -9,11 +9,23 @@ repositories {
     mavenCentral()
 }
 
-dependencies {
-    testImplementation platform('org.junit:junit-bom:5.9.1')
-    testImplementation 'org.junit.jupiter:junit-jupiter'
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'idea'
+
+    group = 'cn.pollosssss'
+    version = '1.0-SNAPSHOT'
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        implementation 'org.projectlombok:lombok:1.18.24'
+        annotationProcessor 'org.projectlombok:lombok:1.18.24'
+        testImplementation platform('org.junit:junit-bom:5.9.1')
+        testImplementation 'org.junit.jupiter:junit-jupiter'
+    }
+    test {
+        useJUnitPlatform()
+    }
 }
 
-test {
-    useJUnitPlatform()
-}

@@ -1,4 +1,5 @@
 rootProject.name = 'small-rpc'
-include 'rpc-server'
-include 'rpc-client'
+include 'rpc-provider'
+include 'rpc-consumer'
+include 'rpc-common'
 
