@@ -2,7 +2,6 @@ package cn.pollosssss;
 
 import cn.pollosssss.handler.ResponseHandler;
 import cn.pollosssss.service.HelloServiceImpl;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
@@ -16,11 +15,9 @@ import io.netty.handler.codec.serialization.ObjectEncoder;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
-public class Main {
+public class ConsumerMain {
 
   private static ResponseHandler responseHandler =  new ResponseHandler();
-
-  private static ObjectMapper objectMapper = new ObjectMapper();
 
   public static void main(String[] args) throws InterruptedException, ExecutionException {
     Bootstrap bootstrap = new Bootstrap();
