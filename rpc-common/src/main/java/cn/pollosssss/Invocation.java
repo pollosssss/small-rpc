@@ -8,8 +8,9 @@ import lombok.Data;
 @Builder
 public class Invocation implements Serializable {
 
-  public String interfaceName;
-  public String methodName;
-  public Class[] parameterTypes;
-  public Object[] parameters;
+  private String requestId;
+  private String interfaceName;
+  private String methodName;
+  private Class[] parameterTypes;
+  private Object[] parameters;
 }

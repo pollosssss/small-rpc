@@ -1,36 +1,45 @@
 package cn.pollosssss;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.net.ServerSocket;
-import java.net.Socket;
+import cn.pollosssss.handler.RequestHandler;
+import io.netty.bootstrap.ServerBootstrap;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelOption;
+import io.netty.channel.EventLoopGroup;
+import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.SocketChannel;
+import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.codec.serialization.ClassResolvers;
+import io.netty.handler.codec.serialization.ObjectDecoder;
+import io.netty.handler.codec.serialization.ObjectEncoder;
 
 public class Main {
-  public static void main(String[] args)
-      throws IOException, ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException {
-    ServerSocket serverSocket = new ServerSocket(8888);
-    while (true) {
-      Socket socket = serverSocket.accept();
-      ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
-      Invocation invocation = (Invocation) in.readObject();
-      String interfaceName = invocation.getInterfaceName();
-      String methodName = invocation.getMethodName();
-      Object[] parameters = invocation.getParameters();
-      Class[] parameterTypes = invocation.getParameterTypes();
+  public static void main(String[] args) throws InterruptedException {
+    EventLoopGroup bossGroup = new NioEventLoopGroup();
+    EventLoopGroup workerGroup = new NioEventLoopGroup();
+    try {
+      ServerBootstrap b = new ServerBootstrap();
+      b.group(bossGroup, workerGroup)
+          .channel(NioServerSocketChannel.class)
+          .childHandler(new ChannelInitializer<SocketChannel>() {
+            @Override
+            public void initChannel(SocketChannel ch) {
+              ch.pipeline()
+                  .addLast(new ObjectDecoder(ClassResolvers.cacheDisabled(null)))
+                  .addLast(new ObjectEncoder())
+                  .addLast(new RequestHandler());
+            }
+          }).option(ChannelOption.SO_BACKLOG, 128)
+          .childOption(ChannelOption.SO_KEEPALIVE, true);
 
-      Class<?> clazz = Class.forName(interfaceName);
-      Method method = clazz.getMethod(methodName, parameterTypes);
-      Object response = method.invoke(clazz.newInstance(), parameters);
-      ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-      out.writeObject(response);
-      out.flush();
-      out.close();
-      in.close();
-      socket.close();
+      ChannelFuture f = b.bind(9000).sync();
+      f.channel().closeFuture().sync();
+    } finally {
+      workerGroup.shutdownGracefully();
+      bossGroup.shutdownGracefully();
     }
 
   }
+
+
 }
