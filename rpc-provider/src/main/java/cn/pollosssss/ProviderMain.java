@@ -1,6 +1,9 @@
 package cn.pollosssss;
 
 import cn.pollosssss.handler.RequestHandler;
+import cn.pollosssss.registry.RegistryFactory;
+import cn.pollosssss.service.HelloService;
+import cn.pollosssss.service.HelloServiceImpl;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -15,6 +18,10 @@ import io.netty.handler.codec.serialization.ObjectEncoder;
 
 public class ProviderMain {
   public static void main(String[] args) throws InterruptedException {
+
+    RegistryFactory.registryMap.put(HelloService.class, HelloServiceImpl.class);
+
+
     EventLoopGroup bossGroup = new NioEventLoopGroup();
     EventLoopGroup workerGroup = new NioEventLoopGroup();
     try {

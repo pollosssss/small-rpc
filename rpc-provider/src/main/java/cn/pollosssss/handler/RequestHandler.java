@@ -2,6 +2,7 @@ package cn.pollosssss.handler;
 
 import cn.pollosssss.Invocation;
 import cn.pollosssss.RpcResponse;
+import cn.pollosssss.registry.RegistryFactory;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import java.lang.reflect.Method;
@@ -16,8 +17,10 @@ public class RequestHandler extends SimpleChannelInboundHandler<Invocation> {
     Class[] parameterTypes = invocation.getParameterTypes();
 
     Class<?> clazz = Class.forName(interfaceName);
-    Method method = clazz.getMethod(methodName, parameterTypes);
-    Object response = method.invoke(clazz.newInstance(), parameters);
+    Class implClass = RegistryFactory.registryMap.get(clazz);
+
+    Method method = implClass.getMethod(methodName, parameterTypes);
+    Object response = method.invoke(implClass.newInstance(), parameters);
     RpcResponse rpcResponse = RpcResponse.builder().requestId(invocation.getRequestId()).result(response).build();
     ctx.writeAndFlush(rpcResponse).addListener(future ->
         {
