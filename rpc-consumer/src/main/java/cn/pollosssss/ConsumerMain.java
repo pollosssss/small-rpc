@@ -1,14 +1,12 @@
 package cn.pollosssss;
 
-import cn.pollosssss.service.HelloService;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+@SpringBootApplication
 public class ConsumerMain {
 
-
   public static void main(String[] args) {
-    String pollosssss = ProxyFactory.getProxy(HelloService.class).sayHello("pollosssss");
-
-    System.out.println(pollosssss);
-
+    SpringApplication.run(ConsumerMain.class, args);
   }
 }
